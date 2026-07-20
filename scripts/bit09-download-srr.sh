@@ -45,7 +45,7 @@ do
     line="$(echo "$line"|tr -d '\n')"
     echo "### $line ###"
     # Compose command
-    fastqdumpCommand="fastq-dump --gzip -X 100";
+    fastqdumpCommand="fastq-dump --gzip";
     if [[ $3 == "PE" ]]; then
         # Add --split-3 for paired end reads
         fastqdumpCommand="$fastqdumpCommand --split-3";
