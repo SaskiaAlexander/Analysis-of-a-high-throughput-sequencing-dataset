@@ -33,6 +33,13 @@ fi
 outFolder=$2;
 mkdir -p ${outFolder}
 ################################################################################
+# LOGGING (write everything to a log file AND the terminal)
+################################################################################
+logFile="${outFolder}/bit09-fastqc-$(date +%Y%m%d-%H%M%S).log";
+# Redirect stdout and stderr through tee: shown in terminal and saved to logFile
+exec > >(tee -a "${logFile}") 2>&1;
+echo "### Log started at $(date) -> ${logFile} ###";
+################################################################################
 # RUN FASTQC # $1 = path fastq files, $2 = output folder, $3 = threads
 ################################################################################
 # Concatenate filenames
