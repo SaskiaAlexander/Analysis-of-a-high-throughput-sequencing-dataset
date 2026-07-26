@@ -76,34 +76,32 @@ all_values = pd.concat(df[BASES] for _, df in samples)
 y_min = max(0, all_values.values.min() - Y_AXIS_PADDING)
 y_max = min(100, all_values.values.max() + Y_AXIS_PADDING)
 
-# One stacked row per sample, sharing a single x-axis
-nrows = len(samples)
-fig, axes = plt.subplots(nrows, 1, figsize=(9, 2 * nrows), sharex=True, sharey=True, squeeze=False)
+# Arrange the samples in a grid of two columns and as many rows as needed
+ncols = 2
+nrows = (len(samples) + ncols - 1) // ncols
+fig, axes = plt.subplots(nrows, ncols, figsize=(6 * ncols, 2 * nrows), sharex=True, sharey=True, squeeze=False)
 axes = axes.flatten()
 
 for ax, (sample_name, df) in zip(axes, samples):
     plot_sample(ax, df, sample_name)
-    ax.label_outer()  # only the bottom subplot keeps its x tick labels
+    ax.label_outer()  # only the left column keeps y labels and the bottom row keeps x labels
 
-axes[0].set_ylim(y_min, y_max)  # sharey=True applies this to every row
+axes[0].set_ylim(y_min, y_max)  # sharey=True applies this to every subplot
 
-# Reserve space around the subplot stack: left/bottom for the shared axis labels
-# (tight_layout doesn't know about sup labels added after it runs, so this has to
-# be generous enough that they don't collide with the tick labels), top for the
-# title, right for the legend
-fig.tight_layout(rect=[0.07, 0.09, 0.86, 0.88])
+# Reserve space around the subplot grid: left/bottom for the shared axis labels
+fig.tight_layout(rect=[0.07, 0.09, 0.86, 0.86])
 
 # Anchor the title, x-axis label and legend to the actual top/bottom edges of the
-# subplot stack, instead of guessed constants, so they stay tight against the plots
+# subplot grid, instead of guessed constants, so they stay tight against the plots
 top_edge = axes[0].get_position().y1
 bottom_edge = axes[-1].get_position().y0
 
-fig.suptitle("Per Base Sequence Content", y=top_edge + 0.04, fontsize=14)
-fig.supxlabel("Position in read (bp)", y=bottom_edge - 0.06)
-fig.supylabel("Sequence content (%)", x=0.035)
+fig.suptitle("Per Base Sequence Content", y=top_edge + 0.09, fontsize=14)
+fig.supxlabel("Position in read (bp)", y=bottom_edge - 0.10)
+fig.supylabel("Sequence content (%)", x=0.055)
 
 handles, labels = axes[0].get_legend_handles_labels()
-fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.88, top_edge))
+fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.855, top_edge))
 
 # Make sure the output directory exists before saving into it
 os.makedirs(OUT_DIR, exist_ok=True)
