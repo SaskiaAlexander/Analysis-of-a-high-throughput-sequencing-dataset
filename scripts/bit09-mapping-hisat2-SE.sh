@@ -1,6 +1,7 @@
 #!/bin/bash
 ################################################################################
 # Author	: Paco Hulpiau - Howest
+# Adapted by: Saskia Alexander - Howest student
 # Usage		: bash bit09-mapping-hisat2-SE.sh 
 #             /home/user/trimmomatic
 #             /data/igenomes/hisat2-index-mm10/genome
@@ -52,7 +53,7 @@ if [[ $lastChar == '/' ]]; then
 fi
 mkdir -p ${outFolder}
 ################################################################################
-# 6. RUN TOPHAT2 USING NUMBER OF THREADS
+# 6. RUN HISAT2 USING NUMBER OF THREADS
 ################################################################################
 # Concatenate _1 filenames
 for i in $(ls ${inputFolder}/*.fastq.gz); do
@@ -70,6 +71,8 @@ for i in $(ls ${inputFolder}/*.fastq.gz); do
     hisat2Command="$hisat2Command -U ${inputFile}";
     hisat2Command="$hisat2Command -S ${outFolder}${baseName}.sam";
     hisat2Command="$hisat2Command --un ${outFolder}${baseName}_unmapped.fastq";
+    # Write output and the HISAT2 alignment summary (stderr) to a log file (follow with: tail -f)
+    hisat2Command="$hisat2Command >${outFolder}${baseName}_hisat2_log.txt 2>&1";
     # Show command
     echo -e "$hisat2Command";
     # Execute
